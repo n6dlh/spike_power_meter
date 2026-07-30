@@ -2,44 +2,70 @@
 #include <Wire.h>
 #include <INA226.h>
 
-INA226 INA(0x40);
+// INA226 I2C address
+constexpr uint8_t INA_ADDRESS = 0x40;
 
-// --- R002 Shunt = 0.002 Ohms ---
-const float SHUNT_OHMS = 0.002; 
+// ESP32-C3 SuperMini pins on the new PCB
+constexpr uint8_t ALERT_PIN = 5;
+constexpr uint8_t SCL_PIN   = 6;
+constexpr uint8_t SDA_PIN   = 7;
 
-void setup() {
+// INA226 version of the board uses a 3.5 milliohm shunt.
+// The schematic describes this as two R007 resistors in parallel.
+constexpr float SHUNT_OHMS = 0.0035f;
+
+// 23 A places the INA226 near its maximum shunt-voltage range:
+// 23 A × 0.0035 ohm = 0.0805 V
+constexpr float MAX_CURRENT_AMPS = 23.0f;
+
+INA226 INA(INA_ADDRESS);
+
+void setup()
+{
     Serial.begin(115200);
-    delay(2000); 
-    Wire.begin(8, 9); // ESP32-C3 Pins
+    delay(2000);
 
-    if (!INA.begin()) {
-        while (1) { Serial.println("0,0,0,0"); delay(1000); }
+    // INA226 ALERT output is normally open-drain.
+    pinMode(ALERT_PIN, INPUT_PULLUP);
+
+    // New PCB I2C pins
+    Wire.begin(SDA_PIN, SCL_PIN);
+    Wire.setClock(400000);
+
+    if (!INA.begin())
+    {
+        while (true)
+        {
+            Serial.println("0,0,0,0");
+            delay(1000);
+        }
     }
 
-    // Set averaging to 16 samples to smooth out the R002 noise
-    INA.setAverage(INA226_16_SAMPLES); 
-    
-    // We calibrate to a higher range since R002 is for high current
-    INA.setMaxCurrentShunt(25.0, SHUNT_OHMS); 
+    // Average 16 measurements to reduce noise.
+    INA.setAverage(INA226_16_SAMPLES);
+
+    // Configure library calibration for the new shunt.
+    INA.setMaxCurrentShunt(MAX_CURRENT_AMPS, SHUNT_OHMS);
 }
 
-void loop() {
-    float voltage = INA.getBusVoltage();
-    float shunt_mV = INA.getShuntVoltage_mV();
+void loop()
+{
+    const float voltage = INA.getBusVoltage();
+    const float shunt_mV = INA.getShuntVoltage_mV();
 
-    // Manual Calculation
-    // Current (A) = Volts / Resistance
-    float current_A = (shunt_mV / 1000.0) / SHUNT_OHMS;
-    
-    // Power (W) = Volts * Amps
-    float power_W = voltage * current_A;
+    // Convert millivolts to volts, then divide by shunt resistance.
+    const float current_A =
+        (shunt_mV / 1000.0f) / SHUNT_OHMS;
 
-    // Send to Python: V, I(Amps), P(Watts), Shunt_mV
+    const float power_W = voltage * current_A;
+
+    // Preserve the existing Python application data format:
+    // Voltage, Current, Power, Shunt millivolts
     Serial.print(voltage, 3);
     Serial.print(",");
-    Serial.print(current_A, 3); // Send Amps with 3 decimal places
+    Serial.print(current_A, 3);
     Serial.print(",");
-    Serial.print(power_W, 3);   // Send Watts with 3 decimal places
+    Serial.print(power_W, 3);
     Serial.print(",");
     Serial.println(shunt_mV, 4);
 
