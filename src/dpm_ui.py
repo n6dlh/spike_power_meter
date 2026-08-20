@@ -6,6 +6,7 @@ from collections import deque
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import os
+import ctypes
 
 # Base design dimensions (original geometry)
 BASE_WIDTH = 920
@@ -13,10 +14,26 @@ BASE_HEIGHT = 980
 
 class PowerMeterApp(ctk.CTk):
     def __init__(self):
+        try:
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+                "SpikePowerMeter.DesktopApp"
+            )
+        except (AttributeError, OSError):
+            pass
+
         super().__init__()
-        self.title("Dell Power Meter - 7-Segment Clone")
+        self.title("Spike Power Meter")
         self.geometry(f"{BASE_WIDTH}x{BASE_HEIGHT}")
         ctk.set_appearance_mode("dark")
+
+        try:
+            icon_path = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "DellPowerMeter.ico",
+            )
+            self.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Icon error: {e}")
 
         # --- 1. FONT LOADING ---
         self.font_name = "Arial"

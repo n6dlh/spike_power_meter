@@ -1,4 +1,4 @@
-# 🔌 Dell Power Meter Digitizer (USB-C Pro Upgrade)
+# 🔌 Spike Power Meter Digitizer (USB-C Pro Upgrade)
 
 This is the USB-C upgraded version of my Dell power meter. You can build this [Dell/Alienware Laptop Power Meter Box](https://www.thingiverse.com/thing:7031863) by printing following the build list. This project replaces standard analog readouts with an **ESP32-C3** and an **INA226** high-side sensor, streaming live power data over **USB-C** to a custom Python dashboard.
 
@@ -70,6 +70,18 @@ Ensure the digital-7.ttf font file is in the project root, then run:
 ```
 python dpm_ui.py
 ```
+
+### 4. Building a standalone Windows executable
+
+From PowerShell in the project root, run:
+
+```powershell
+.\build-exe.ps1
+```
+
+The single-file, windowed application is written to `dist\Spike Power Meter.exe`.
+It embeds Python, the Python packages, CustomTkinter assets, and the Digital-7
+font, so the target Windows computer does not need Python or supporting files.
 
 1.  Select the COM Port for your device.
 2.  Click Connect.
