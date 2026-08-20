@@ -12,7 +12,7 @@ constexpr uint8_t SDA_PIN   = 7;
 
 // INA226 version of the board uses a 3.5 milliohm shunt.
 // The schematic describes this as two R007 resistors in parallel.
-constexpr float SHUNT_OHMS = 0.0035f;
+constexpr float SHUNT_OHMS = 0.002f;
 
 // 23 A places the INA226 near its maximum shunt-voltage range:
 // 23 A × 0.0035 ohm = 0.0805 V
