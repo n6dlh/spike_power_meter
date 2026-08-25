@@ -12,7 +12,14 @@ constexpr uint8_t SDA_PIN   = 7;
 
 // INA226 version of the board uses a 3.5 milliohm shunt.
 // The schematic describes this as two R007 resistors in parallel.
-constexpr float SHUNT_OHMS = 0.002f;
+constexpr float SHUNT_OHMS = 0.004f;
+
+// Calibrated against a reference load: 1.10 A indicated, 0.95 A actual.
+// Apply the same correction to current and the derived power reading.
+constexpr float CURRENT_CALIBRATION = 0.95f / 1.10f;
+
+// Suppress the INA226's small zero-current offset and ADC-count noise.
+constexpr float CURRENT_ZERO_DEADBAND_AMPS = 0.003f;
 
 // 23 A places the INA226 near its maximum shunt-voltage range:
 // 23 A × 0.0035 ohm = 0.0805 V
@@ -54,8 +61,13 @@ void loop()
     const float shunt_mV = INA.getShuntVoltage_mV();
 
     // Convert millivolts to volts, then divide by shunt resistance.
-    const float current_A =
+    const float uncalibrated_current_A =
         (shunt_mV / 1000.0f) / SHUNT_OHMS;
+    float current_A = uncalibrated_current_A * CURRENT_CALIBRATION;
+    if (fabsf(current_A) < CURRENT_ZERO_DEADBAND_AMPS)
+    {
+        current_A = 0.0f;
+    }
 
     const float power_W = voltage * current_A;
 
