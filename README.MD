@@ -17,6 +17,9 @@ This will download your dependencies and install them, move the icons and create
 
 <img src="./images/image2.png" alt="App Screenshot">
 
+<img src="./images/image3.png" alt="Serial and USB ports">
+
+
 ## ✨ Features
 
 - **Dual-Jack Support:** Compatible with 7.4mm and 4.5mm Dell/Alienware barrel chargers.
