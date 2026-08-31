@@ -1,6 +1,21 @@
+This is a fork of this Repo https://github.com/theastronate/Dell-Spike-Power-Meter-PC-Connect
+
+Huge thanks to @theastronate and Dell Parts People for making this, I have made only the changes to get this to run from the gui on Ubuntu. I plan to make this an appimage so it can run on any linux distro. 
+
 # 🔌 Spike Power Meter Digitizer (USB-C Pro Upgrade)
 
 This is the USB-C upgraded version of my Dell power meter. You can build this [Dell/Alienware Laptop Power Meter Box](https://www.thingiverse.com/thing:7031863) by printing following the build list. This project replaces standard analog readouts with an **ESP32-C3** and an **INA226** high-side sensor, streaming live power data over **USB-C** to a custom Python dashboard.
+
+ Added support for linux python to run, it will identify what OS is it running on and formulate the icon based on that.There is an example spikepowermeter.desktop file in the repo for Debian/Ubuntun distros. There is an install.sh script that will work to install it. On Debian/ubuntu clone this repo, and navigate to the folder. Run the following:
+
+ chmod +x install.sh
+./install.sh
+
+This will download your dependencies and install them, move the icons and create the desktop launcher for the python code. Once that is done it will look like this. 
+
+<img src="./images/image1.png" alt="App Icon">
+
+<img src="./images/image2.png" alt="App Screenshot">
 
 ## ✨ Features
 
@@ -9,7 +24,8 @@ This is the USB-C upgraded version of my Dell power meter. You can build this [D
 - **Digital-7 Dashboard:** A custom Python UI built with `customtkinter` that mimics the classic blue LCD 7-segment display.
 - **Live Graphing:** Real-time visual tracking of Voltage (V), Amps (I), and Watts (W).
 - **Max Current Hold:** Automatically captures and holds peak amperage for diagnostic review.
-
+ 
+ Added support for linux python to run, it will identify what OS is it running on and formulate the icon based on that.
 ---
 
 ## 🛠️ Hardware Setup
