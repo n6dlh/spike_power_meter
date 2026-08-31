@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import os
 import ctypes
+import sys
+import tkinter as tk
 
 # Base design dimensions (original geometry)
 BASE_WIDTH = 920
@@ -21,17 +23,20 @@ class PowerMeterApp(ctk.CTk):
         except (AttributeError, OSError):
             pass
 
-        super().__init__()
+        super().__init__(className='SpikePowerMeter')
         self.title("Spike Power Meter")
         self.geometry(f"{BASE_WIDTH}x{BASE_HEIGHT}")
         ctk.set_appearance_mode("dark")
-
         try:
-            icon_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                "DellPowerMeter.ico",
-            )
-            self.iconbitmap(icon_path)
+            icon_dir = os.path.dirname(os.path.abspath(__file__))
+            if sys.platform.startswith("win"):
+                icon_path = os.path.join(icon_dir, "DellPowerMeter.ico")
+                self.iconbitmap(icon_path)
+            else:
+                icon_path = os.path.join(icon_dir, "DellPowerMeter.png")
+                icon_img = tk.PhotoImage(file=icon_path)
+                self.iconphoto(True, icon_img)
+                self._icon_img_ref = icon_img  # keep a reference alive
         except Exception as e:
             print(f"Icon error: {e}")
 

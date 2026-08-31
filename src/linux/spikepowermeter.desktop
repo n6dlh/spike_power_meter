@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Spike Power Meter
+Exec=python3 ~/powermeter/Dell-Spike-Power-Meter-PC-Connect/src/dpm_ui.py
+Icon=~/powermeter/Dell-Spike-Power-Meter-PC-Connect/src/DellPowerMeter.png
+Terminal=false
+StartupWMClass=SpikePowerMeter
+Categories=Utility;
